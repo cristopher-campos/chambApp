@@ -191,7 +191,7 @@ button:active {
 .btn-reject { background-color: var(--status-danger); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--status-danger); }
 .btn-reject:hover { background-color: #d8143d; box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-danger); transform: translateY(-1px) scale(1.02);}
 .btn-counter { background-color: var(--status-warning); color: var(--background-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--status-warning); }
-.btn-counter:hover { background-color: #f7d900; box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-warning); transform: translateY(-1px) scale(1.02);}
+.btn-counter:hover { background-color: #f7d900; box-shadow: 0 44px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-warning); transform: translateY(-1px) scale(1.02);}
 .btn-calificar { background-color: var(--accent-color); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--accent-color); }
 .btn-calificar:hover { background-color: #c737e0; box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px var(--accent-color); transform: translateY(-1px) scale(1.02);}
 
@@ -667,7 +667,7 @@ input::placeholder, textarea::placeholder {
 }
 .btn-add-friend:hover, .btn-accept-friend-prompt:hover {
     background-color: var(--secondary-dark);
-    box-shadow: 0 4px 12px rgba(41, 121, 255, 0.4);
+    box-shadow: 0 44px 12px rgba(41, 121, 255, 0.4);
     transform: translateY(-1px);
 }
 
@@ -1359,6 +1359,10 @@ let friendRequests = JSON.parse(localStorage.getItem('friendRequests')) || {}; /
 let friends = JSON.parse(localStorage.getItem('friends')) || {}; // {user1: [friend1, friend2]}
 let messages = JSON.parse(localStorage.getItem('messages')) || {}; // {chatId: [{sender, message, timestamp}]}
 let reports = JSON.parse(localStorage.getItem('reports')) || [];
+
+// Define the owner's username
+const OWNER_USERNAME = "OWNER";
+const OWNER_PASSWORD = "Owner12152";
 
 // Initialize default profile data for new users
 function createDefaultUserProfile(username) {
@@ -2654,21 +2658,21 @@ function handleProfileImageUpload() {
 
 // --- Owner Profile Display ---
 function showOwnerProfileModal() {
-    const ownerUser = users['owner'];
+    const ownerUser = users[OWNER_USERNAME]; // Use OWNER_USERNAME constant
     if (!ownerUser) {
         showToast('El perfil del propietario no está disponible.', 'danger', '❌');
         return;
     }
 
     if (ownerProfilePhoto) ownerProfilePhoto.src = ownerUser.profilePicture || 'https://placehold.co/120x120/dc3545/ffffff?text=Owner';
-    if (ownerProfileUsernameDisplay) ownerProfileUsernameDisplay.textContent = ownerUser.username || 'Propietario';
+    if (ownerProfileUsernameDisplay) ownerProfileUsernameDisplay.textContent = ownerUser.username || OWNER_USERNAME; // Use OWNER_USERNAME
     if (ownerProfileLema) ownerProfileLema.textContent = ownerUser.lema || 'El creador de ChambAPP.';
     if (ownerProfileDescription) ownerProfileDescription.textContent = ownerUser.description || 'Este es el perfil del administrador principal de ChambAPP.';
     if (ownerRankBadge) {
         ownerRankBadge.textContent = ownerUser.rank;
         ownerRankBadge.className = `rank-badge ${ownerUser.rank}`;
     }
-    if (ownerProfileRatingValue) ownerProfileRatingValue.textContent = calculateUserRating('owner');
+    if (ownerProfileRatingValue) ownerProfileRatingValue.textContent = calculateUserRating(OWNER_USERNAME); // Use OWNER_USERNAME
 
     showModal('modal-owner-profile');
 }
@@ -2682,19 +2686,21 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const username in users) {
         users[username] = { ...createDefaultUserProfile(username), ...users[username] };
     }
-    if (!users['owner']) {
-        users['owner'] = createDefaultUserProfile('owner');
-        users['owner'].password = 'ADMIN123';
-        users['owner'].rank = 'owner';
-        users['owner'].lema = 'Impulsando ChambAPP para todos.';
-        users['owner'].description = 'Soy el fundador de ChambAPP, dedicado a construir una comunidad de ayuda mutua.';
-        users['owner'].profilePicture = 'https://placehold.co/120x120/dc3545/ffffff?text=Owner';
+    // Initialize or update the owner user with the new username and password
+    if (!users[OWNER_USERNAME]) {
+        users[OWNER_USERNAME] = createDefaultUserProfile(OWNER_USERNAME);
+        users[OWNER_USERNAME].password = OWNER_PASSWORD;
+        users[OWNER_USERNAME].rank = 'owner';
+        users[OWNER_USERNAME].lema = 'Impulsando ChambAPP para todos.';
+        users[OWNER_USERNAME].description = 'Soy el fundador de ChambAPP, dedicado a construir una comunidad de ayuda mutua.';
+        users[OWNER_USERNAME].profilePicture = 'https://placehold.co/120x120/dc3545/ffffff?text=Owner';
     } else {
-        users['owner'].password = 'ADMIN123';
-        users['owner'].rank = 'owner';
-        users['owner'].lema = users['owner'].lema || 'Impulsando ChambAPP para todos.';
-        users['owner'].description = users['owner'].description || 'Este es el perfil del administrador principal de ChambAPP.';
-        users['owner'].profilePicture = users['owner'].profilePicture || 'https://placehold.co/120x120/dc3545/ffffff?text=Owner';
+        // Ensure existing owner profile has the correct password and rank
+        users[OWNER_USERNAME].password = OWNER_PASSWORD;
+        users[OWNER_USERNAME].rank = 'owner';
+        users[OWNER_USERNAME].lema = users[OWNER_USERNAME].lema || 'Impulsando ChambAPP para todos.';
+        users[OWNER_USERNAME].description = users[OWNER_USERNAME].description || 'Este es el perfil del administrador principal de ChambAPP.';
+        users[OWNER_USERNAME].profilePicture = users[OWNER_USERNAME].profilePicture || 'https://placehold.co/120x120/dc3545/ffffff?text=Owner';
     }
     saveUsers();
 
@@ -2972,3 +2978,4 @@ function addFriendButtonListeners() {
 </script>
 </body>
 </html>
+
