@@ -1360,7 +1360,7 @@ let friends = JSON.parse(localStorage.getItem('friends')) || {}; // {user1: [fri
 let messages = JSON.parse(localStorage.getItem('messages')) || {}; // {chatId: [{sender, message, timestamp}]}
 let reports = JSON.parse(localStorage.getItem('reports')) || [];
 
-// Define the owner's username
+// Define the owner's username and password
 const OWNER_USERNAME = "OWNER";
 const OWNER_PASSWORD = "Owner12152";
 
@@ -1641,6 +1641,12 @@ function register() {
         return;
     }
 
+    // Prevent registering with the owner's username
+    if (username === OWNER_USERNAME) {
+        showToast(`El nombre de usuario "${OWNER_USERNAME}" está reservado.`, 'danger', '❌');
+        return;
+    }
+
     const newUserProfile = createDefaultUserProfile(username);
     newUserProfile.password = password;
     users[username] = newUserProfile;
@@ -1665,6 +1671,17 @@ function login() {
         return;
     }
 
+    // Special login for the OWNER
+    if (username === OWNER_USERNAME && password === OWNER_PASSWORD) {
+        setCurrentUser(OWNER_USERNAME);
+        showToast(`¡Hola de nuevo, ${OWNER_USERNAME}!`, 'success', '👋');
+        showScreen(menuPrincipalScreen);
+        regUsuarioInput.value = '';
+        regPasswordInput.value = '';
+        return; // Exit function after owner login
+    }
+
+    // Normal user login
     if (users[username] && users[username].password === password) {
         setCurrentUser(username);
         showToast(`¡Hola de nuevo, ${username}!`, 'success', '👋');
@@ -2978,4 +2995,3 @@ function addFriendButtonListeners() {
 </script>
 </body>
 </html>
-
