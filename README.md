@@ -2186,8 +2186,13 @@ input::placeholder, textarea::placeholder {
 
             // Logic for "View Location" button of the order
             let viewLocationButtonHtml = '';
-            const canViewLocation = order.location && (order.estado === 'aceptado' || users[currentUser].rank === 'owner' || (order.solicitante === currentUser && !users[order.solicitante].hideAddress));
-            if (canViewLocation) {
+            // Show location if order is accepted, or if current user is owner, or if current user is requester and hasn't hidden address
+            const showLocationButton = order.location && (
+                order.estado === 'aceptado' ||
+                users[currentUser].rank === 'owner' ||
+                (order.solicitante === currentUser && !users[order.solicitante].hideAddress)
+            );
+            if (showLocationButton) {
                 viewLocationButtonHtml = `<button class="btn-mapa" data-order-id="${order.id}" data-location-lat="${order.location.lat}" data-location-lng="${order.location.lng}">Ver Ubicación</button>`;
             }
 
@@ -2291,8 +2296,13 @@ input::placeholder, textarea::placeholder {
             }
 
             let viewLocationButtonHtml = '';
-            const canViewLocation = order.location && (order.estado === 'aceptado' || users[currentUser].rank === 'owner' || (order.solicitante === currentUser && !users[order.solicitante].hideAddress));
-            if (canViewLocation) {
+            // Show location if order is accepted, or if current user is owner, or if current user is requester and hasn't hidden address
+            const showLocationButton = order.location && (
+                order.estado === 'aceptado' ||
+                users[currentUser].rank === 'owner' ||
+                (order.solicitante === currentUser && !users[order.solicitante].hideAddress)
+            );
+            if (showLocationButton) {
                 viewLocationButtonHtml = `<button class="btn-mapa" data-order-id="${order.id}" data-location-lat="${order.location.lat}" data-location-lng="${order.location.lng}">Ver Ubicación</button>`;
             }
 
@@ -2392,8 +2402,12 @@ input::placeholder, textarea::placeholder {
 
             // Logic for "View Location" button of the order
             let viewLocationButtonHtml = '';
-            const canViewLocation = order.location && (order.estado === 'aceptado' || users[currentUser].rank === 'owner' || (order.solicitante === currentUser && !users[order.solicitante].hideAddress));
-            if (canViewLocation) {
+            const showLocationButton = order.location && (
+                order.estado === 'aceptado' ||
+                users[currentUser].rank === 'owner' ||
+                (order.solicitante === currentUser && !users[order.solicitante].hideAddress)
+            );
+            if (showLocationButton) {
                 viewLocationButtonHtml = `<button class="btn-mapa" data-order-id="${order.id}" data-location-lat="${order.location.lat}" data-location-lng="${order.location.lng}">Ver Ubicación</button>`;
             }
 
