@@ -212,7 +212,7 @@ button:active {
 .btn-accept { background-color: var(--status-success); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--status-success); }
 .btn-accept:hover { background-color: var(--primary-dark); box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-success); transform: translateY(-1px) scale(1.02);}
 .btn-reject { background-color: var(--status-danger); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--status-danger); }
-.btn-reject:hover { background-color: #d8143d; box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-danger); transform: translateY(-1px) scale(1.02);}
+.btn-reject:hover { background-color: #d8143d; box-shadow: 0 44px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-danger); transform: translateY(-1px) scale(1.02);}
 .btn-counter { background-color: var(--status-warning); color: var(--background-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--status-warning); }
 .btn-counter:hover { background-color: #f7d900; box-shadow: 0 44px 12px rgba(0,0,0,0.3), 0 0 15px var(--status-warning); transform: translateY(-1px) scale(1.02);}
 .btn-calificar { background-color: var(--accent-color); box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 5px var(--accent-color); }
@@ -921,56 +921,6 @@ input::placeholder, textarea::placeholder {
     border: 1px solid rgba(0,230,118,0.4);
 }
 
-/* Floating Donate Button - REMOVED, now part of utilities screen */
-/*
-#btn-floating-donar {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 1001;
-    padding: 16px 25px;
-    font-size: 1.1em;
-    border-radius: 50px;
-    background: linear-gradient(45deg, var(--accent-color) 0%, #2979ff 100%);
-    color: white;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.4), 0 0 15px var(--accent-color);
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-}
-
-#btn-floating-donar:hover {
-    transform: translateY(-4px) scale(1.06);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 25px var(--accent-color);
-    background-position: right center;
-}
-#btn-floating-donar:active {
-    transform: translateY(0) scale(0.98);
-}
-*/
-
-/* Google Maps Modal Specific Styles */
-#modal-google-map .modal {
-    max-width: 800px;
-    width: 95%;
-    max-height: 90vh;
-    padding: 20px;
-}
-
-#map {
-    width: 100%;
-    height: 400px; /* Fixed height for the map */
-    background-color: #333;
-    border-radius: 10px;
-    margin-top: 20px;
-    border: 1px solid var(--secondary-color);
-    box-shadow: inset 0 0 10px rgba(41, 121, 255, 0.2);
-}
-
 /* Specific styles for the Donation Modal to make it smaller */
 #modal-donar .modal {
     max-width: 400px; /* Reduced max-width */
@@ -1095,10 +1045,6 @@ input::placeholder, textarea::placeholder {
     .creditos { right: 15px; }
     .version-info { left: 15px; }
 
-    #map {
-        height: 300px;
-    }
-
     /* Responsive adjustments for Donation Modal */
     #modal-donar .modal {
         max-width: 90%; /* Even smaller on mobile */
@@ -1148,9 +1094,6 @@ input::placeholder, textarea::placeholder {
     .creditos, .version-info {
         font-size: 0.65em;
         bottom: 5px;
-    }
-    #map {
-        height: 250px;
     }
 }
 </style>
@@ -1515,18 +1458,6 @@ input::placeholder, textarea::placeholder {
     </div>
 </div>
 
-<!-- Modal para Google Maps -->
-<div id="modal-google-map" class="modal-overlay">
-    <div class="modal">
-        <button class="close-btn" onclick="hideModal('modal-google-map')">✖️</button>
-        <h3>🗺️ Ubicación en el Mapa</h3>
-        <div id="map"></div>
-        <div class="modal-buttons">
-            <button onclick="hideModal('modal-google-map')" class="btn-ocultar-pedido">Cerrar Mapa</button>
-        </div>
-    </div>
-</div>
-
 <!-- Modal para confirmación de cierre de sesión -->
 <div id="modal-logout-confirm" class="modal-overlay">
     <div class="modal">
@@ -1560,11 +1491,6 @@ input::placeholder, textarea::placeholder {
     // Owner user credentials
     const OWNER_USERNAME = "OWNER";
     const OWNER_PASSWORD = "Owner12152";
-
-    // Variables for Google Maps integration
-    let map;
-    let mapMarker;
-    const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY'; // !!! REPLACE WITH YOUR ACTUAL GOOGLE MAPS API KEY !!!
 
     // Global variable for the article image being created
     let currentArticleImageBase64 = null;
@@ -1752,11 +1678,6 @@ input::placeholder, textarea::placeholder {
     // Logout confirmation modal elements
     const modalLogoutConfirm = document.getElementById('modal-logout-confirm');
     const btnConfirmLogout = document.getElementById('btn-confirm-logout');
-
-    // Google Maps modal elements
-    const modalGoogleMap = document.getElementById('modal-google-map');
-    const mapDiv = document.getElementById('map');
-
 
     // =========================================================================
     // 3. Utility and UI Functions
@@ -3115,40 +3036,20 @@ input::placeholder, textarea::placeholder {
     }
 
     /**
-     * Dynamically loads the Google Maps API script.
-     * @param {Function} callback - Function to execute once the API is loaded.
-     */
-    function loadGoogleMapsScript(callback) {
-        if (window.google && window.google.maps) {
-            callback(); // If already loaded, execute callback directly
-            return;
-        }
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-        window.initMap = callback; // Set the global callback for Google Maps API
-    }
-
-    /**
-     * Displays the current user's location on a Google Map.
-     * Also shows coordinates in a toast.
+     * Displays the current user's location on a new Google Maps window.
      */
     function showMyLocationOnMap() {
         showToast('Obteniendo tu ubicación...', 'info', '⏳');
         getLocation((location, error) => {
             if (location) {
-                showToast(`Tu ubicación actual: Lat: ${location.lat.toFixed(4)}, Lng: ${location.lng.toFixed(4)}`, 'info', '🗺️');
+                const mapUrl = `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`;
+                window.open(mapUrl, '_blank');
+                showToast('Abriendo tu ubicación en Google Maps...', 'info', '🗺️');
                 // Optionally, save to user profile if not already saved
                 if (users[currentUser] && !users[currentUser].location) {
                     users[currentUser].location = location;
                     saveUsers();
                 }
-                loadGoogleMapsScript(() => {
-                    initMapWithLocation(location);
-                    showModal('modal-google-map');
-                });
             } else {
                 showToast('No se pudo obtener tu ubicación para mostrar en el mapa.', 'danger', '❌');
             }
@@ -3156,7 +3057,7 @@ input::placeholder, textarea::placeholder {
     }
 
     /**
-     * Displays a specific location (from an order) on a Google Map.
+     * Displays a specific location (from an order) on a new Google Maps window.
      * @param {object} location - Location object {lat, lng}.
      */
     function showOrderLocationOnMap(location) {
@@ -3164,53 +3065,9 @@ input::placeholder, textarea::placeholder {
             showToast('Ubicación del pedido no disponible o inválida.', 'danger', '❌');
             return;
         }
-        showToast(`Ubicación del pedido: Lat: ${location.lat.toFixed(4)}, Lng: ${location.lng.toFixed(4)}`, 'info', '🗺️');
-        loadGoogleMapsScript(() => {
-            initMapWithLocation(location);
-            showModal('modal-google-map');
-        });
-    }
-
-    /**
-     * Initializes the Google Maps map with a specific location.
-     * @param {object} location - Location object {lat, lng}.
-     */
-    function initMapWithLocation(location) {
-        if (!map) {
-            map = new google.maps.Map(mapDiv, {
-                center: location,
-                zoom: 15,
-                mapId: 'DEMO_MAP_ID', // You can create a custom map ID in Google Cloud Console
-                disableDefaultUI: true, // Hide default UI controls
-                zoomControl: true, // Show zoom controls
-                streetViewControl: false, // Hide Street View control
-                fullscreenControl: false, // Hide fullscreen control
-                mapTypeControl: false, // Hide map type control
-                scaleControl: false, // Hide scale control
-                rotateControl: false, // Hide rotation control
-            });
-        } else {
-            map.setCenter(location);
-        }
-
-        if (mapMarker) {
-            mapMarker.setMap(null); // Remove old marker if exists
-        }
-        mapMarker = new google.maps.Marker({
-            position: location,
-            map: map,
-            title: 'Ubicación',
-            animation: google.maps.Animation.DROP,
-        });
-
-        // Optionally, add an info window
-        const infoWindow = new google.maps.InfoWindow({
-            content: `<b>Ubicación</b><br>Lat: ${location.lat.toFixed(4)}, Lng: ${location.lng.toFixed(4)}`
-        });
-        mapMarker.addListener('click', () => {
-            infoWindow.open(map, mapMarker);
-        });
-        infoWindow.open(map, mapMarker); // Open info window by default
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`;
+        window.open(mapUrl, '_blank');
+        showToast('Abriendo ubicación del pedido en Google Maps...', 'info', '🗺️');
     }
 
 
